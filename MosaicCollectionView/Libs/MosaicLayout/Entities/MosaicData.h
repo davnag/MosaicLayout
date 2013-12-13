@@ -8,19 +8,33 @@
 
 #import <Foundation/Foundation.h>
 
-typedef enum {
+typedef NS_ENUM(NSUInteger, MosaicLayoutType) {
     kMosaicLayoutTypeUndefined,
     kMosaicLayoutTypeSingle,
     kMosaicLayoutTypeDouble
-} MosaicLayoutType;
+};
+
 
 @interface MosaicData : NSObject
 
--(id)initWithDictionary:(NSDictionary *)aDict;
+/**
+ *  Initializes a MosaicData object with the given image name and title.
+ *
+ *  Added by Hsoi 2013-12-13.
+ *
+ *  @param imageName An image resource reference. Can be an http URL to a remote image, or a name, which will be loaded by +[UIImage imageNamed:].
+ *  @param title     The title to display.
+ *
+ *  @return Returns the newly allocated MosaicData object (or nil on error).
+ */
+- (id)initWithImageName:(NSString*)imageName title:(NSString*)title;
 
-@property (strong) NSString *imageFilename;
-@property (strong) NSString *title;
-@property (assign) BOOL firstTimeShown;
-@property (assign) MosaicLayoutType layoutType;
-@property (assign) float relativeHeight;
+- (id)initWithDictionary:(NSDictionary*)aDict;
+
+@property (nonatomic, strong) NSString*             imageFilename;
+@property (nonatomic, strong) NSString*             title;
+@property (nonatomic, assign) BOOL                  firstTimeShown;
+@property (nonatomic, assign) MosaicLayoutType      layoutType;
+@property (nonatomic, assign) CGFloat               relativeHeight;
+
 @end
