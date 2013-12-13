@@ -81,9 +81,11 @@
         //  Random delay to avoid all animations happen at once
         float millisecondsDelay = (arc4random() % 700) / 1000.0f;
         
+        UIImageView* __weak weakImageView = _imageView;
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, millisecondsDelay * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
             [UIView animateWithDuration:0.3 animations:^{
-                _imageView.alpha = 1.0;
+                UIImageView* strongImageView = weakImageView;
+                strongImageView.alpha = 1.0;
             }];
         });        
     }
@@ -98,9 +100,11 @@
     //  This avoids the animation runs every time the cell is reused
     if (self.isHighlighted != highlighted){
         _imageView.alpha = 0.0;
+        UIImageView* __weak weakImageView = _imageView;
         [UIView animateWithDuration:0.3 animations:^{
-            _imageView.alpha = 1.0;
-        }];        
+            UIImageView* strongImageView = weakImageView;
+            strongImageView.alpha = 1.0;
+        }];
     }
     
     [super setHighlighted:highlighted];    
@@ -115,11 +119,13 @@
     if ([_mosaicData.imageFilename hasPrefix:@"http://"] ||
         [_mosaicData.imageFilename hasPrefix:@"https://"]){
         //  Download image from the web
+        MosaicCell* __weak weakSelf = self;
         void (^imageSuccess)(UIImage *downloadedImage) = ^(UIImage *downloadedImage){
+            MosaicCell* strongSelf = weakSelf;
             
             //  This check is to avoid wrong images on reused cells
-            if ([newMosaicData.title isEqualToString:_mosaicData.title]){
-                self.image = downloadedImage;
+            if ([newMosaicData.title isEqualToString:strongSelf->_mosaicData.title]){
+                strongSelf.image = downloadedImage;
             }
         };
         
