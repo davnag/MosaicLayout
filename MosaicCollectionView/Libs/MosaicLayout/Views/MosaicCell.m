@@ -120,7 +120,7 @@
         [_mosaicData.imageFilename hasPrefix:@"https://"]){
         //  Download image from the web
         MosaicCell* __weak weakSelf = self;
-        void (^imageSuccess)(UIImage *downloadedImage) = ^(UIImage *downloadedImage){
+        void (^imageSuccess)(AFHTTPRequestOperation *operation, id downloadedImage) = ^(AFHTTPRequestOperation *operation, id downloadedImage){
             MosaicCell* strongSelf = weakSelf;
             
             //  This check is to avoid wrong images on reused cells
@@ -131,8 +131,13 @@
         
         NSURL *anURL = [NSURL URLWithString:_mosaicData.imageFilename];
         NSURLRequest *anURLRequest = [NSURLRequest requestWithURL:anURL];
-        AFImageRequestOperation *operation = [AFImageRequestOperation imageRequestOperationWithRequest:anURLRequest
-                                                                                               success:imageSuccess];
+        
+        AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:anURLRequest];
+        operation.responseSerializer = [AFImageResponseSerializer serializer];
+        [operation setCompletionBlockWithSuccess:imageSuccess failure:^(AFHTTPRequestOperation *op, NSError *error) {
+            NSLog(@"Image error: %@", error);
+        }];
+
         [operation start];
     }else{
         //  Load image from bundle
