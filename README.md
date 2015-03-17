@@ -1,7 +1,5 @@
 # MosaicLayout
-This is a very similar UI component to [MosaicUI](https://github.com/betzerra/MosaicUI).
-
-It's using the **Lightbox algorithm** described in @vjeux's blog and taking advantage of **UICollectionView**.  
+A layout very similar to [MosaicUI](https://github.com/betzerra/MosaicUI) that uses **Lightbox algorithm** described in @vjeux's blog and takes advantage of **UICollectionView**.
 
 ![Landscape on iPad](http://www.betzerra.com.ar/wp-content/uploads/2013/02/Photo-Feb-17-6-29-14-PM.png)
 
