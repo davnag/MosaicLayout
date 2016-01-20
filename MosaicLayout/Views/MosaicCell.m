@@ -8,7 +8,6 @@
 
 #import "MosaicCell.h"
 #import <QuartzCore/QuartzCore.h>
-#import "AFNetworking.h"
 
 #define kLabelHeight 20
 #define kLabelMargin 10
@@ -137,36 +136,36 @@
 
     _mosaicData = newMosaicData;
     
-    
     //  Image set
     if ([_mosaicData.imageFilename hasPrefix:@"http://"] ||
         [_mosaicData.imageFilename hasPrefix:@"https://"]){
         //  Download image from the web
         MosaicCell* __weak weakSelf = self;
-        void (^imageSuccess)(AFHTTPRequestOperation *operation, id downloadedImage) = ^(AFHTTPRequestOperation *operation, id downloadedImage){
-            MosaicCell* strongSelf = weakSelf;
+        
+        dispatch_queue_t imageQueue = dispatch_queue_create("Image Queue",NULL);
+        
+        dispatch_async(imageQueue, ^{
             
-            //  This check is to avoid wrong images on reused cells
-            if ([newMosaicData.title isEqualToString:strongSelf->_mosaicData.title]){
-                strongSelf.image = downloadedImage;
+            NSURL *url = [NSURL URLWithString:_mosaicData.imageFilename];
+            if(url != nil) {
+                NSData *imageData = [NSData dataWithContentsOfURL:url];
+                if(imageData != nil) {
+                    UIImage *downloadedImage = [UIImage imageWithData:imageData];
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        MosaicCell* strongSelf = weakSelf;
+                        
+                        //  This check is to avoid wrong images on reused cells
+                        if ([newMosaicData.title isEqualToString:strongSelf->_mosaicData.title]){
+                            strongSelf.image = downloadedImage;
+                        }
+                    });
+                }
             }
-        };
-        
-        NSURL *anURL = [NSURL URLWithString:_mosaicData.imageFilename];
-        NSURLRequest *anURLRequest = [NSURLRequest requestWithURL:anURL];
-        
-        AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:anURLRequest];
-        operation.responseSerializer = [AFImageResponseSerializer serializer];
-        [operation setCompletionBlockWithSuccess:imageSuccess failure:^(AFHTTPRequestOperation *op, NSError *error) {
-            NSLog(@"Image error: %@", error);
-        }];
-
-        [operation start];
-    }else{
-        //  Load image from bundle
+        });
+    }else {
         self.image = [UIImage imageNamed:_mosaicData.imageFilename];
     }
-    
     
     //  Title set
     _titleLabel.text = _mosaicData.title;

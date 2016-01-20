@@ -9,7 +9,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "MosaicLayout"
-  s.version          = "0.0.1"
+  s.version          = "0.0.2"
   s.summary          = "A layout very similar to MosaicUI that uses Lightbox algorithm described in @vjeux's blog and takes advantage of UICollectionView."
   s.description      = <<-DESC
                        A layout very similar to MosaicUI that uses Lightbox algorithm described in @vjeux's blog and takes advantage of UICollectionView.
@@ -27,5 +27,4 @@ Pod::Spec.new do |s|
   s.requires_arc = true
 
   s.source_files = 'MosaicLayout/**/*.{h,m}'
-  s.dependency 'AFNetworking', '~> 1.0'
 end
